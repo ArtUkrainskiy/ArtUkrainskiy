@@ -26,6 +26,13 @@ Software engineer and team lead with 15 years of experience. I have worked in pr
 ![RabbitMQ](https://img.shields.io/badge/RabbitMQ-FF6600?logo=rabbitmq&logoColor=white)
 ![Laravel](https://img.shields.io/badge/Laravel-FF2D20?logo=laravel&logoColor=white)
 
+#### Writing
+
+- [One mutex for every row: mysqlnd statistics in thread-based PHP](https://artukrainskiy.github.io/posts/mysqlnd-zts-statistics/)
+- [12 web stacks on vendor defaults, PostgreSQL and MySQL: what a request costs and what the drivers change](https://artukrainskiy.github.io/posts/web-request-cost-stage-1/)
+- [json_encode() in php-src, autumn 2026: where the time goes and what is on the table](https://artukrainskiy.github.io/posts/json-encode-utf8-autumn-2026/)
+- [php-src's benchmark CI, read as a history](https://github.com/ArtUkrainskiy/php-src-bench/tree/main/reports/php-benchmark-history) — 7,024 master commits of callgrind results, plotted.
+
 #### Open source
 
 **[php-src](https://github.com/php/php-src)** — performance of the PHP interpreter: string functions, `json_encode()`, `htmlspecialchars()`, CSV, the compiler, and threaded (ZTS) builds. Every change comes with measurements on Intel and AMD with several compilers, a byte-for-byte comparison with master, and the cases where it gets slower. I also review other contributors' performance PRs with the same measurements.
@@ -38,23 +45,15 @@ Software engineer and team lead with 15 years of experience. I have worked in pr
 
 | PR | Change | Measured |
 |---|---|---|
-| [![#24448](https://img.shields.io/github/pulls/detail/state/php/php-src/24448?label=%2324448&style=for-the-badge)](https://github.com/php/php-src/pull/24448) | mysqlnd: relaxed atomics instead of a mutex for statistics in ZTS builds | FrankenPHP + MySQL, 16 threads: 10–47% less CPU per request, depending on the cores the threads run on; statistics cost 12–91% before, 0.6–1.4% after ([report](https://github.com/ArtUkrainskiy/php-src-bench/tree/main/reports/mysqlnd-zts-stats)) |
+| [![#24448](https://img.shields.io/github/pulls/detail/state/php/php-src/24448?label=%2324448&style=for-the-badge)](https://github.com/php/php-src/pull/24448) | mysqlnd: relaxed atomics instead of a mutex for statistics in ZTS builds (issue [#24447](https://github.com/php/php-src/issues/24447)) | FrankenPHP + MySQL, 16 threads: 10–47% less CPU per request, depending on the cores the threads run on; statistics cost 12–91% before, 0.6–1.4% after ([report](https://github.com/ArtUkrainskiy/php-src-bench/tree/main/reports/mysqlnd-zts-stats)) |
 | [![#24283](https://img.shields.io/github/pulls/detail/state/php/php-src/24283?label=%2324283&style=for-the-badge)](https://github.com/php/php-src/pull/24283) | `json_encode()`: decode valid UTF-8 inline | non-ASCII text 9–32% fewer cycles, 6 compiler/CPU configs; with GCC 13/14 on Intel some ASCII inputs up to 20% more ([report](https://github.com/ArtUkrainskiy/php-src-bench/tree/main/reports/json-encode-utf8-inline)) |
 | [![#24207](https://img.shields.io/github/pulls/detail/state/php/php-src/24207?label=%2324207&style=for-the-badge)](https://github.com/php/php-src/pull/24207) | `php_mblen()` without `mbrlen()` for ASCII | `fgetcsv()` 4,210 → 500 ns per row ([report](https://github.com/ArtUkrainskiy/php-src-bench/tree/main/reports/fgetcsv-mblen)) |
-| [![#24198](https://img.shields.io/github/pulls/detail/state/php/php-src/24198?label=%2324198&style=for-the-badge)](https://github.com/php/php-src/pull/24198) | `#[\Deprecated]` without constructing the attribute | 5,016 → 2,778 instructions per deprecated call ([report](https://github.com/ArtUkrainskiy/php-src-bench/tree/main/reports/deprecation-cost)) |
+| [![#24198](https://img.shields.io/github/pulls/detail/state/php/php-src/24198?label=%2324198&style=for-the-badge)](https://github.com/php/php-src/pull/24198) | `#[\Deprecated]` without constructing the attribute (issue [#24191](https://github.com/php/php-src/issues/24191)) | 5,016 → 2,778 instructions per deprecated call ([report](https://github.com/ArtUkrainskiy/php-src-bench/tree/main/reports/deprecation-cost)) |
 | [![#24180](https://img.shields.io/github/pulls/detail/state/php/php-src/24180?label=%2324180&style=for-the-badge)](https://github.com/php/php-src/pull/24180) | `[$a, $b] = [$b, $a]` without building the array | 922 → 523 instructions per swap ([report](https://github.com/ArtUkrainskiy/php-src-bench/tree/main/reports/list-assign-from-array-literal)) |
 | [![#24145](https://img.shields.io/github/pulls/detail/state/php/php-src/24145?label=%2324145&style=for-the-badge)](https://github.com/php/php-src/pull/24145) | ASCII fast path in `htmlspecialchars()` | 41–89% fewer cycles where something has to be encoded (English text, HTML, Markdown, JavaScript) ([report](https://github.com/ArtUkrainskiy/php-src-bench/tree/main/reports/htmlspecialchars-ascii-fast-path)) |
 | [![#24142](https://img.shields.io/github/pulls/detail/state/php/php-src/24142?label=%2324142&style=for-the-badge)](https://github.com/php/php-src/pull/24142) | `html_entity_decode()`: stop at the first non-name byte | a string of `&` 3.5× faster; `&param=` URLs in text up to 7% slower |
 
-Numbers for #24198 and #24180 are instructions on an Intel i7-13700H, #24448 is on an AMD Ryzen 9 5950X; the reports have the full tables, machines and compilers.
-
-#### Issues
-
-| Issue | Found | Measured |
-|---|---|---|
-| [![#24447](https://img.shields.io/github/issues/detail/state/php/php-src/24447?label=%2324447&style=for-the-badge)](https://github.com/php/php-src/issues/24447) | mysqlnd takes a process-wide mutex on every statistics update in ZTS builds (FrankenPHP, threaded Apache) | FrankenPHP + MySQL: +7–32% CPU per request depending on the load, up to +91% depending on where the threads run; fix in #24448 ([write-up](https://artukrainskiy.github.io/posts/mysqlnd-zts-statistics/)) |
-| [![#24191](https://img.shields.io/github/issues/detail/state/php/php-src/24191?label=%2324191&style=for-the-badge)](https://github.com/php/php-src/issues/24191) | a call to a `#[\Deprecated]` function constructs the attribute even when `E_DEPRECATED` is filtered | about 5,000 instructions per call; fix in #24198 |
-| [![#24183](https://img.shields.io/github/issues/detail/state/php/php-src/24183?label=%2324183&style=for-the-badge)](https://github.com/php/php-src/issues/24183) | the benchmark CI builds Symfony Demo without ext-intl | 18% of the measured request is a polyfill |
+Numbers for #24198 and #24180 are instructions on an Intel i7-13700H, #24448 is on an AMD Ryzen 9 5950X; the reports have the full tables, machines and compilers. Also reported: the benchmark CI built Symfony Demo without ext-intl, so 18% of the measured request was a polyfill ([#24183](https://github.com/php/php-src/issues/24183)).
 
 #### Reviewed and measured
 
@@ -72,10 +71,3 @@ Performance PRs by other contributors, measured on current master with GCC 13.3,
 | [![#22648](https://img.shields.io/github/pulls/detail/state/php/php-src/22648?label=%2322648&style=for-the-badge)](https://github.com/php/php-src/pull/22648) | `array_diff()` with a bitset for ints | ints 71–88% fewer cycles; arrays of strings pay +1–7% for the check |
 | [![#23110](https://img.shields.io/github/pulls/detail/state/php/php-src/23110?label=%2323110&style=for-the-badge)](https://github.com/php/php-src/pull/23110) | `unserialize()` back-reference lookup | 14–31% fewer cycles on payloads with many references |
 | [![#23675](https://img.shields.io/github/pulls/detail/state/php/php-src/23675?label=%2323675&style=for-the-badge)](https://github.com/php/php-src/pull/23675) | SSE2/NEON path in `json_encode()` | mostly-ASCII strings of 256 bytes and more 1.3–5× faster; Cyrillic and CJK text 4–19% slower with GCC |
-
-#### Writing
-
-- [One mutex for every row: mysqlnd statistics in thread-based PHP](https://artukrainskiy.github.io/posts/mysqlnd-zts-statistics/)
-- [12 web stacks on vendor defaults, PostgreSQL and MySQL: what a request costs and what the drivers change](https://artukrainskiy.github.io/posts/web-request-cost-stage-1/)
-- [json_encode() in php-src, autumn 2026: where the time goes and what is on the table](https://artukrainskiy.github.io/posts/json-encode-utf8-autumn-2026/)
-- [php-src's benchmark CI, read as a history](https://github.com/ArtUkrainskiy/php-src-bench/tree/main/reports/php-benchmark-history) — 7,024 master commits of callgrind results, plotted.
