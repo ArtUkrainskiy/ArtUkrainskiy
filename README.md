@@ -41,10 +41,15 @@ Software engineer and team lead with 15 years of experience. I have worked in pr
 
 **[web-request-cost](https://github.com/ArtUkrainskiy/web-request-cost)** — CPU and memory per request of 12 web stacks (PHP-FPM, FrankenPHP, RoadRunner, Swoole, Go, Node.js, .NET, Java and others) on PostgreSQL and MySQL, with every raw record.
 
+#### RFC
+
+- [Prepared Literal String Matching and Replacement](https://wiki.php.net/rfc/prepared_literal_string_matching) · [discussion](https://news-web.php.net/php.internals/133028)
+
 #### Pull requests
 
 | PR | Change | Measured |
 |---|---|---|
+| [![#25122](https://img.shields.io/github/pulls/detail/state/php/php-src/25122?label=%2325122&style=for-the-badge)](https://github.com/php/php-src/pull/25122) | `Str\Matcher` / `Str\Replacer`: prepared literal substring search and replacement | Including construction/destruction: `matches()` on 4 KiB, 128 keys, no matches takes 42.0–43.7% less time than warm `preg_match()`. With 32 keys and 16 replacements, `replace()` is 2.1–2.2× slower at 4 KiB and takes 35.7–36.1% less time at 16 KiB than warm PCRE. AMD Ryzen 9 5950X, GCC 15.2 / Clang 21.1 ([report](https://github.com/ArtUkrainskiy/php-src-bench/tree/main/reports/multi-pattern-search)) |
 | [![#25115](https://img.shields.io/github/pulls/detail/state/php/php-src/25115?label=%2325115&style=for-the-badge)](https://github.com/php/php-src/pull/25115) | `strpos()` and related functions: compact Sunday table for 9–31-byte needles | Primary medians on 108 application fixtures: 4.5–27.2% less time on AMD; Intel results vary, with reproduced slowdowns of 2.9–4.1%. A synthetic 64-byte-needle control takes ~31% more time on AMD/GCC 15 ([report](https://github.com/ArtUkrainskiy/php-src-bench/tree/main/reports/compact-sunday)) |
 | [![#24774](https://img.shields.io/github/pulls/detail/state/php/php-src/24774?label=%2324774&style=for-the-badge)](https://github.com/php/php-src/pull/24774) | `base64_decode()`: decode four characters at a time in the character loop | 24–44 B tokens/keys: 41–50% fewer instructions; line-wrapped 64 KB: 68–76% fewer instructions, depending on format and strict mode. Clean 64 KB is nearly unchanged ([report](https://github.com/ArtUkrainskiy/php-src-bench/tree/main/reports/base64-decode-quads)) |
 | [![#24448](https://img.shields.io/github/pulls/detail/state/php/php-src/24448?label=%2324448&style=for-the-badge)](https://github.com/php/php-src/pull/24448) | mysqlnd: relaxed atomics instead of a mutex for statistics in ZTS builds (issue [#24447](https://github.com/php/php-src/issues/24447)) | FrankenPHP + MySQL, 16 threads: 10–47% less CPU per request, depending on the cores the threads run on; statistics cost 12–91% before, 0.6–1.4% after ([report](https://github.com/ArtUkrainskiy/php-src-bench/tree/main/reports/mysqlnd-zts-stats)) |
