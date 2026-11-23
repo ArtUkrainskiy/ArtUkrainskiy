@@ -66,7 +66,7 @@ Software engineer and team lead with 15 years of experience. I have worked in pr
 
 | PR | Bug |
 |---|---|
-| [![#25529](https://img.shields.io/github/pulls/detail/state/php/php-src/25529?label=%2325529&style=for-the-badge)](https://github.com/php/php-src/pull/25529) | Phar signing reads a freed OpenSSL key |
+| [![#25529](https://img.shields.io/badge/%2325529-merged-blueviolet?style=for-the-badge)](https://github.com/php/php-src/pull/25529) | Phar signing reads a freed OpenSSL key ([commit](https://github.com/php/php-src/commit/9af71942c6610852dd6350cf19e278628c8b5b60)) |
 | [![#25524](https://img.shields.io/github/pulls/detail/state/php/php-src/25524?label=%2325524&style=for-the-badge)](https://github.com/php/php-src/pull/25524) | `openssl_csr_new()`: `string_mask` carries over to later calls |
 | [![#25523](https://img.shields.io/github/pulls/detail/state/php/php-src/25523?label=%2325523&style=for-the-badge)](https://github.com/php/php-src/pull/25523) | `openssl_error_string()` returns errors from a previous request |
 | [![#25539](https://img.shields.io/github/pulls/detail/state/php/php-src/25539?label=%2325539&style=for-the-badge)](https://github.com/php/php-src/pull/25539) | master didn't build with GCC 15 |
